@@ -341,18 +341,32 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "user_id": update.effective_user.id
     }
 )
-            await context.bot.send_message(
-                chat_id=ADMIN_ID,
-                text=(
-                    f"📦 New Order\n\n"
-                    f"User: @{update.effective_user.username}\n"
-                    f"User ID: {update.effective_user.id}\n\n"
-                    f"Game: {game}\n"
-                    f"Package: {package}\n"
-                    f"Price: {price}\n"
-                    f"Player ID: {text}"
-                )
-            )
+            keyboard = InlineKeyboardMarkup([
+    [
+        InlineKeyboardButton(
+            "✅ Complete",
+            callback_data=f"complete:{update.effective_user.id}:{price}"
+        ),
+        InlineKeyboardButton(
+            "❌ Cancel",
+            callback_data=f"cancel:{update.effective_user.id}"
+        )
+    ]
+])
+
+        await context.bot.send_message(
+    chat_id=ADMIN_ID,
+    text=(
+        f"📦 New Order\n\n"
+        f"User: @{update.effective_user.username}\n"
+        f"User ID: {update.effective_user.id}\n\n"
+        f"Game: {game}\n"
+        f"Package: {package}\n"
+        f"Price: {price}\n"
+        f"Player ID: {text}"
+    ),
+    reply_markup=keyboard
+)
         await start(update, context)
 
 
@@ -393,6 +407,61 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     elif data.startswith("reject:"):
+    elif data.startswith("complete:"):
+
+        _, user_id, price = data.split(":")
+
+        user_id = int(user_id)
+
+        amount = int(
+            price.replace(" KS", "")
+        )
+
+        success = deduct_balance(
+            user_id,
+            amount
+        )
+
+        if not success:
+
+            await context.bot.send_message(
+                chat_id=user_id,
+                text="❌ Order Failed\n\nInsufficient Balance."
+            )
+
+            return
+
+        balance = get_balance(
+            user_id
+        )
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=(
+                f"✅ Order Completed\n\n"
+                f"Amount: {amount} KS 🇲🇲\n\n"
+                f"Current Balance: {balance} KS 🇲🇲"
+            )
+        )
+
+        await query.edit_message_text(
+            query.message.text + "\n\n✅ COMPLETED"
+        )
+
+    elif data.startswith("cancel:"):
+
+        _, user_id = data.split(":")
+
+        user_id = int(user_id)
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="❌ Order Cancelled"
+        )
+
+        await query.edit_message_text(
+            query.message.text + "\n\n❌ CANCELLED"
+        )
 
         _, user_id, amount = data.split(":")
 
