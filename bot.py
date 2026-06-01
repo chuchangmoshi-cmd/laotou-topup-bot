@@ -119,26 +119,26 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📦 No orders yet."
         )
 
-elif text == "💳 Deposit":
+    elif text == "💳 Deposit":
 
-    await update.message.reply_photo(
-        photo="https://raw.githubusercontent.com/chuchangmoshi-cmd/laotou-topup-bot/main/laotouskm.jpg",
-        caption=(
-            "💳 KBZPay Deposit\n\n"
-            "Name: DAW CHWAY SI MEE\n"
-            "Number: 09760772941\n\n"
-            "Please complete payment first.\n"
-            "Then enter deposit amount (KS)."
+        await update.message.reply_photo(
+            photo="https://raw.githubusercontent.com/chuchangmoshi-cmd/laotou-topup-bot/main/laotouskm.jpg",
+            caption=(
+                "💳 KBZPay Deposit\n\n"
+                "Name: DAW CHWAY SI MEE\n"
+                "Number: 09760772941\n\n"
+                "Please complete payment first.\n"
+                "Then enter deposit amount (KS)."
+            )
         )
-    )
 
-    context.user_data["deposit_mode"] = True
+        context.user_data["deposit_mode"] = True
 
-elif text == "☎️ Support":
+    elif text == "☎️ Support":
 
-    await update.message.reply_text(
-        "@shoplaotou"
-    )
+        await update.message.reply_text(
+            "@shoplaotou"
+        )
 
     # MLBB
     elif text == "🎯 Mobile Legends":
