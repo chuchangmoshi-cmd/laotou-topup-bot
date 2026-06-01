@@ -144,7 +144,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"💰 Your Balance\n\n{balance} KS"
         )
 
-        elif text == "📦 My Orders":
+    elif text == "📦 My Orders":
 
         orders = get_orders(
             update.effective_user.id
