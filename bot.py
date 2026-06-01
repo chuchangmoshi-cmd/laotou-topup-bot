@@ -1,15 +1,23 @@
-from telegram import Update, ReplyKeyboardMarkup
+from telegram import (
+    Update,
+    ReplyKeyboardMarkup,
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
+)
+
 from telegram.ext import (
     Application,
     CommandHandler,
     MessageHandler,
+    CallbackQueryHandler,
     ContextTypes,
     filters
 )
+
 import os
 
 from handlers.deposit import notify_admin, ADMIN_ID
-from handlers.balance import get_balance
+from handlers.balance import get_balance, add_balance
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -72,10 +80,24 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             photo = update.message.photo[-1].file_id
 
+            keyboard = InlineKeyboardMarkup([
+                [
+                    InlineKeyboardButton(
+                        "✅ Confirm",
+                        callback_data=f"approve:{user.id}:{amount}"
+                    ),
+                    InlineKeyboardButton(
+                        "❌ Reject",
+                        callback_data=f"reject:{user.id}:{amount}"
+                    )
+                ]
+            ])
+
             await context.bot.send_photo(
                 chat_id=ADMIN_ID,
                 photo=photo,
-                caption=caption
+                caption=caption,
+                reply_markup=keyboard
             )
 
             await update.message.reply_text(
@@ -259,6 +281,56 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await start(update, context)
 
 
+async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    query = update.callback_query
+
+    await query.answer()
+
+    if query.from_user.id != ADMIN_ID:
+        return
+
+    data = query.data
+
+    if data.startswith("approve:"):
+
+        _, user_id, amount = data.split(":")
+
+        user_id = int(user_id)
+        amount = int(amount)
+
+        new_balance = add_balance(
+            user_id,
+            amount
+        )
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text=(
+                f"✅ Deposit Approved\n\n"
+                f"Amount: {amount} KS\n\n"
+                f"Current Balance: {new_balance} KS"
+            )
+        )
+
+        await query.edit_message_caption(
+            caption=query.message.caption + "\n\n✅ APPROVED"
+        )
+
+    elif data.startswith("reject:"):
+
+        _, user_id, amount = data.split(":")
+
+        user_id = int(user_id)
+
+        await context.bot.send_message(
+            chat_id=user_id,
+            text="❌ Deposit Rejected"
+        )
+
+        await query.edit_message_caption(
+            caption=query.message.caption + "\n\n❌ REJECTED"
+        )
 def main():
 
     app = Application.builder().token(TOKEN).build()
@@ -274,7 +346,12 @@ def main():
         )
     )
 
+    app.add_handler(
+        CallbackQueryHandler(button_callback)
+    )
+
     app.run_polling()
+
 
 if __name__ == "__main__":
     main()
