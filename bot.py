@@ -35,13 +35,37 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
 
+    # Deposit Mode
+    if context.user_data.get("deposit_mode"):
+
+        amount = text
+
+        context.user_data["deposit_amount"] = amount
+
+        msg = await notify_admin(
+            update,
+            amount
+        )
+
+        await context.bot.send_message(
+            chat_id=ADMIN_ID,
+            text=msg
+        )
+
+        await update.message.reply_text(
+            "✅ Deposit Request Sent"
+        )
+
+        context.user_data["deposit_mode"] = False
+
+        return
+
     # Main Menu
     if text == "🎮 Top Up":
 
         keyboard = [
             ["🎯 Mobile Legends"],
             ["🎯 PUBG Mobile"],
-            ["🎯 Free Fire"],
             ["🔙 Back"]
         ]
 
@@ -67,14 +91,10 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "💳 Deposit":
 
-    context.user_data["deposit_mode"] = True
-
-    await update.message.reply_text(
-        "Enter Deposit Amount (KS)"
-    )
+        context.user_data["deposit_mode"] = True
 
         await update.message.reply_text(
-            "💳 Deposit\n\nContact Admin:\n@shoplaotou"
+            "Enter Deposit Amount (KS)"
         )
 
     elif text == "☎️ Support":
@@ -180,36 +200,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # UID Input
-    elif context.user_data.get("deposit_mode"):
-
-    amount = text
-
-    context.user_data["deposit_amount"] = amount
-
-    msg = await notify_admin(
-        update,
-        amount
-    )
-
-    await context.bot.send_message(
-        chat_id=ADMIN_ID,
-        text=msg
-    )
-
-    await update.message.reply_text(
-        "✅ Deposit Request Sent"
-    )
-
-    context.user_data["deposit_mode"] = False
-
-    return
-
-
-elif text.isdigit():
-
-    game = context.user_data.get("game")
-    package = context.user_data.get("package")
-    price = context.user_data.get("price")
+    elif text.isdigit():
 
         game = context.user_data.get("game")
         package = context.user_data.get("package")
