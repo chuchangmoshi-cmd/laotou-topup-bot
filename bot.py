@@ -7,6 +7,10 @@ from telegram.ext import (
     filters
 )
 import os
+from handlers.balance import (
+    get_balance,
+    add_balance
+)
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -35,14 +39,28 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
     # Main Menu
-    if text == "🎮 Top Up":
+    if text == "/testbalance":
 
-        keyboard = [
-            ["🎯 Mobile Legends"],
-            ["🎯 PUBG Mobile"],
-            ["🎯 Free Fire"],
-            ["🔙 Back"]
-        ]
+    new_balance = add_balance(
+        update.effective_user.id,
+        10000
+    )
+
+    await update.message.reply_text(
+        f"✅ Balance Added\n\n{new_balance} KS"
+    )
+
+    return
+
+
+if text == "🎮 Top Up":
+
+    keyboard = [
+        ["🎯 Mobile Legends"],
+        ["🎯 PUBG Mobile"],
+        ["🎯 Free Fire"],
+        ["🔙 Back"]
+    ]
 
         await update.message.reply_text(
             "Select Game:",
@@ -54,9 +72,13 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "💰 Balance":
 
-        await update.message.reply_text(
-            "💰 Your Balance\n\n0 KS"
-        )
+    balance = get_balance(
+        update.effective_user.id
+    )
+
+    await update.message.reply_text(
+        f"💰 Your Balance\n\n{balance} KS"
+    )
 
     elif text == "📦 My Orders":
 
