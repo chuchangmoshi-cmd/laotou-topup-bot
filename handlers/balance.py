@@ -1,54 +1,80 @@
-import json
-import os
+import sqlite3
 
-BALANCE_FILE = "balances.json"
-
-
-def load_balances():
-    if not os.path.exists(BALANCE_FILE):
-        return {}
-
-    try:
-        with open(BALANCE_FILE, "r") as f:
-            return json.load(f)
-    except:
-        return {}
-
-
-def save_balances(data):
-    with open(BALANCE_FILE, "w") as f:
-        json.dump(data, f)
+DB_FILE = "database.db"
 
 
 def get_balance(user_id):
-    balances = load_balances()
-    return balances.get(str(user_id), 0)
+
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "SELECT balance FROM balances WHERE user_id=?",
+        (str(user_id),)
+    )
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row:
+        return row[0]
+
+    return 0
 
 
 def add_balance(user_id, amount):
-    balances = load_balances()
 
-    user_id = str(user_id)
+    current = get_balance(user_id)
 
-    balances[user_id] = balances.get(user_id, 0) + amount
+    new_balance = current + amount
 
-    save_balances(balances)
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
 
-    return balances[user_id]
+    cursor.execute(
+        """
+        INSERT OR REPLACE INTO balances
+        (user_id, balance)
+        VALUES (?, ?)
+        """,
+        (
+            str(user_id),
+            new_balance
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    return new_balance
 
 
 def deduct_balance(user_id, amount):
-    balances = load_balances()
 
-    user_id = str(user_id)
-
-    current = balances.get(user_id, 0)
+    current = get_balance(user_id)
 
     if current < amount:
         return False
 
-    balances[user_id] = current - amount
+    new_balance = current - amount
 
-    save_balances(balances)
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+
+    cursor.execute(
+        """
+        INSERT OR REPLACE INTO balances
+        (user_id, balance)
+        VALUES (?, ?)
+        """,
+        (
+            str(user_id),
+            new_balance
+        )
+    )
+
+    conn.commit()
+    conn.close()
 
     return True
