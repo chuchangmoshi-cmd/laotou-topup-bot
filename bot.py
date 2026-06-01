@@ -34,6 +34,7 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     text = update.message.text
 
+    # Main Menu
     if text == "🎮 Top Up":
 
         keyboard = [
@@ -51,6 +52,31 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
+    elif text == "💰 Balance":
+
+        await update.message.reply_text(
+            "💰 Your Balance\n\n0 KS"
+        )
+
+    elif text == "📦 My Orders":
+
+        await update.message.reply_text(
+            "📦 No orders yet."
+        )
+
+    elif text == "💳 Deposit":
+
+        await update.message.reply_text(
+            "💳 Deposit\n\nContact Admin:\n@shoplaotou"
+        )
+
+    elif text == "☎️ Support":
+
+        await update.message.reply_text(
+            "@shoplaotou"
+        )
+
+    # MLBB
     elif text == "🎯 Mobile Legends":
 
         keyboard = [
@@ -68,6 +94,37 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
+    elif text == "💎 56 Diamonds":
+
+        context.user_data["game"] = "MLBB"
+        context.user_data["package"] = "56 Diamonds"
+        context.user_data["price"] = "3900 KS"
+
+        await update.message.reply_text(
+            "Please send your MLBB ID"
+        )
+
+    elif text == "💎 172 Diamonds":
+
+        context.user_data["game"] = "MLBB"
+        context.user_data["package"] = "172 Diamonds"
+        context.user_data["price"] = "10800 KS"
+
+        await update.message.reply_text(
+            "Please send your MLBB ID"
+        )
+
+    elif text == "💎 257 Diamonds":
+
+        context.user_data["game"] = "MLBB"
+        context.user_data["package"] = "257 Diamonds"
+        context.user_data["price"] = "15600 KS"
+
+        await update.message.reply_text(
+            "Please send your MLBB ID"
+        )
+
+    # PUBG
     elif text == "🎯 PUBG Mobile":
 
         keyboard = [
@@ -85,66 +142,11 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             )
         )
 
-    elif text == "🎯 Free Fire":
-
-        keyboard = [
-            ["💎 100 Diamonds"],
-            ["💎 310 Diamonds"],
-            ["💎 1060 Diamonds"],
-            ["🔙 Back"]
-        ]
-
-        await update.message.reply_text(
-            "Select Free Fire Package:",
-            reply_markup=ReplyKeyboardMarkup(
-                keyboard,
-                resize_keyboard=True
-            )
-        )
-
-    elif text == "💰 Balance":
-
-        await update.message.reply_text(
-            "💰 Your Balance\n\n$0.00"
-        )
-
-    elif text == "📦 My Orders":
-
-        await update.message.reply_text(
-            "📦 No orders yet."
-        )
-
-    elif text == "💳 Deposit":
-
-        await update.message.reply_text(
-            "💳 Deposit\n\nPlease contact admin:\n@shoplaotou"
-        )
-
-    elif text == "☎️ Support":
-
-        await update.message.reply_text(
-            "☎️ Support\n\n@shoplaotou"
-        )
-
-    elif text == "💎 56 Diamonds":
-
-        await update.message.reply_text(
-            "Please send your MLBB ID"
-        )
-
-    elif text == "💎 172 Diamonds":
-
-        await update.message.reply_text(
-            "Please send your MLBB ID"
-        )
-
-    elif text == "💎 257 Diamonds":
-
-        await update.message.reply_text(
-            "Please send your MLBB ID"
-        )
-
     elif text == "🔫 60 UC":
+
+        context.user_data["game"] = "PUBG Mobile"
+        context.user_data["package"] = "60 UC"
+        context.user_data["price"] = "4000 KS"
 
         await update.message.reply_text(
             "Please send your PUBG UID"
@@ -152,33 +154,41 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "🔫 325 UC":
 
+        context.user_data["game"] = "PUBG Mobile"
+        context.user_data["package"] = "325 UC"
+        context.user_data["price"] = "19000 KS"
+
         await update.message.reply_text(
             "Please send your PUBG UID"
         )
 
     elif text == "🔫 660 UC":
 
+        context.user_data["game"] = "PUBG Mobile"
+        context.user_data["package"] = "660 UC"
+        context.user_data["price"] = "38000 KS"
+
         await update.message.reply_text(
             "Please send your PUBG UID"
         )
 
-    elif text == "💎 100 Diamonds":
+    # UID Input
+    elif text.isdigit():
 
-        await update.message.reply_text(
-            "Please send your Free Fire ID"
-        )
+        game = context.user_data.get("game")
+        package = context.user_data.get("package")
+        price = context.user_data.get("price")
 
-    elif text == "💎 310 Diamonds":
+        if game and package:
 
-        await update.message.reply_text(
-            "Please send your Free Fire ID"
-        )
-
-    elif text == "💎 1060 Diamonds":
-
-        await update.message.reply_text(
-            "Please send your Free Fire ID"
-        )
+            await update.message.reply_text(
+                f"📦 Order Confirmation\n\n"
+                f"Game: {game}\n"
+                f"Package: {package}\n"
+                f"Price: {price}\n"
+                f"Player ID: {text}\n\n"
+                f"Reply YES to confirm."
+            )
 
     elif text == "🔙 Back":
 
