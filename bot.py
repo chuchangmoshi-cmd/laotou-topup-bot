@@ -7,6 +7,7 @@ from telegram.ext import (
     filters
 )
 import os
+from handlers.deposit import notify_admin, ADMIN_ID
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -65,6 +66,12 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     elif text == "💳 Deposit":
+
+    context.user_data["deposit_mode"] = True
+
+    await update.message.reply_text(
+        "Enter Deposit Amount (KS)"
+    )
 
         await update.message.reply_text(
             "💳 Deposit\n\nContact Admin:\n@shoplaotou"
@@ -173,7 +180,36 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
     # UID Input
-    elif text.isdigit():
+    elif context.user_data.get("deposit_mode"):
+
+    amount = text
+
+    context.user_data["deposit_amount"] = amount
+
+    msg = await notify_admin(
+        update,
+        amount
+    )
+
+    await context.bot.send_message(
+        chat_id=ADMIN_ID,
+        text=msg
+    )
+
+    await update.message.reply_text(
+        "✅ Deposit Request Sent"
+    )
+
+    context.user_data["deposit_mode"] = False
+
+    return
+
+
+elif text.isdigit():
+
+    game = context.user_data.get("game")
+    package = context.user_data.get("package")
+    price = context.user_data.get("price")
 
         game = context.user_data.get("game")
         package = context.user_data.get("package")
