@@ -1,3 +1,5 @@
+from database import init_db
+
 from handlers.orders import (
     add_order,
     get_orders
@@ -478,6 +480,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         
 def main():
+
+    init_db()
 
     app = Application.builder().token(TOKEN).build()
 
