@@ -409,47 +409,46 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data.startswith("reject:"):
     elif data.startswith("complete:"):
 
-        _, user_id, price = data.split(":")
+    _, user_id, price = data.split(":")
 
-        user_id = int(user_id)
+    user_id = int(user_id)
 
-        amount = int(
-            price.replace(" KS", "")
-        )
+    amount = int(
+        price.replace(" KS", "")
+    )
 
-        success = deduct_balance(
-            user_id,
-            amount
-        )
+    success = deduct_balance(
+        user_id,
+        amount
+    )
 
-        if not success:
-
-        await context.bot.send_message(
-                chat_id=user_id,
-                text="❌ Order Failed\n\nInsufficient Balance."
-            )
-
-            return
-
-        balance = get_balance(
-            user_id
-        )
+    if not success:
 
         await context.bot.send_message(
             chat_id=user_id,
-            text=(
-                f"✅ Order Completed\n\n"
-                f"Amount: {amount} KS 🇲🇲\n\n"
-                f"Current Balance: {balance} KS 🇲🇲"
-            )
+            text="❌ Order Failed\n\nInsufficient Balance."
         )
 
-        await query.edit_message_text(
-            query.message.text + "\n\n✅ COMPLETED"
+        return
+
+    balance = get_balance(
+        user_id
+    )
+
+    await context.bot.send_message(
+        chat_id=user_id,
+        text=(
+            f"✅ Order Completed\n\n"
+            f"Amount: {amount} KS 🇲🇲\n\n"
+            f"Current Balance: {balance} KS 🇲🇲"
         )
+    )
 
-    elif data.startswith("cancel:"):
+    await query.edit_message_text(
+        query.message.text + "\n\n✅ COMPLETED"
+    )
 
+elif data.startswith("cancel:"):
         _, user_id = data.split(":")
 
         user_id = int(user_id)
