@@ -1,3 +1,8 @@
+from handlers.orders import (
+    add_order,
+    get_orders
+)
+
 from telegram import (
     Update,
     ReplyKeyboardMarkup,
@@ -141,9 +146,34 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "📦 My Orders":
 
+    orders = get_orders(
+        update.effective_user.id
+    )
+
+    if not orders:
+
         await update.message.reply_text(
             "📦 No orders yet."
         )
+
+        return
+
+    msg = "📦 Order History\n\n"
+
+    for i, order in enumerate(
+        orders,
+        start=1
+    ):
+
+        msg += (
+            f"#{i}\n"
+            f"{order['game']}\n"
+            f"{order['package']}\n"
+            f"{order['price']} 🇲🇲\n"
+            f"Status: {order['status']}\n\n"
+        )
+
+    await update.message.reply_text(msg)
 
     elif text == "💳 Deposit":
 
@@ -310,6 +340,16 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 f"{new_balance} KS 🇲🇲"
             )
 
+            add_order(
+    update.effective_user.id,
+    {
+        "game": game,
+        "package": package,
+        "price": price,
+        "uid": text,
+        "status": "Pending"
+    }
+)
             await context.bot.send_message(
                 chat_id=ADMIN_ID,
                 text=(
