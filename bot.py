@@ -121,12 +121,19 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "💳 Deposit":
 
-        context.user_data["deposit_mode"] = True
-
-        await update.message.reply_text(
-            "Enter Deposit Amount (KS)"
+    await update.message.reply_photo(
+        photo="https://raw.githubusercontent.com/chuchangmoshi-cmd/laotou-topup-bot/main/laotouskm.jpg",
+        caption=(
+            "💳 KBZPay Deposit\n\n"
+            "Name: DAW CHWAY SI MEE\n"
+            "Number: 09760772941\n\n"
+            "Please complete payment first.\n"
+            "Then enter deposit amount (KS)."
         )
+    )
 
+    context.user_data["deposit_mode"] = True
+    
     elif text == "☎️ Support":
 
         await update.message.reply_text(
