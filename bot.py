@@ -144,36 +144,36 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             f"💰 Your Balance\n\n{balance} KS"
         )
 
-    elif text == "📦 My Orders":
+        elif text == "📦 My Orders":
 
         orders = get_orders(
             update.effective_user.id
-    )
-
-    if not orders:
-
-        await update.message.reply_text(
-            "📦 No orders yet."
         )
 
-        return
+        if not orders:
 
-    msg = "📦 Order History\n\n"
+            await update.message.reply_text(
+                "📦 No orders yet."
+            )
 
-    for i, order in enumerate(
-        orders,
-        start=1
-    ):
+            return
 
-        msg += (
-            f"#{i}\n"
-            f"{order['game']}\n"
-            f"{order['package']}\n"
-            f"{order['price']} 🇲🇲\n"
-            f"Status: {order['status']}\n\n"
-        )
+        msg = "📦 Order History\n\n"
 
-    await update.message.reply_text(msg)
+        for i, order in enumerate(
+            orders,
+            start=1
+        ):
+
+            msg += (
+                f"#{i}\n"
+                f"{order['game']}\n"
+                f"{order['package']}\n"
+                f"{order['price']} 🇲🇲\n"
+                f"Status: {order['status']}\n\n"
+            )
+
+        await update.message.reply_text(msg)
 
     elif text == "💳 Deposit":
 
