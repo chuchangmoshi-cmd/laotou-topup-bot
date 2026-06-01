@@ -262,8 +262,8 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Please send your PUBG UID"
         )
 
-# UID Input
-elif text.isdigit():
+    # UID Input
+    elif text.isdigit():
 
     game = context.user_data.get("game")
     package = context.user_data.get("package")
