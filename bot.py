@@ -321,24 +321,14 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
                 return
 
-            deduct_balance(
-                update.effective_user.id,
-                price_num
-            )
-
-            new_balance = get_balance(
-                update.effective_user.id
-            )
-
-            await update.message.reply_text(
-                f"✅ Order Submitted\n\n"
-                f"Game: {game}\n"
-                f"Package: {package}\n"
-                f"Price: {price} 🇲🇲\n"
-                f"Player ID: {text}\n\n"
-                f"Remaining Balance:\n"
-                f"{new_balance} KS 🇲🇲"
-            )
+                await update.message.reply_text(
+                    f"📦 Order Submitted\n\n"
+                    f"Game: {game}\n"
+                    f"Package: {package}\n"
+                    f"Price: {price} 🇲🇲\n"
+                    f"Player ID: {text}\n\n"
+                    f"Status: Pending"
+                )
 
             add_order(
     update.effective_user.id,
@@ -347,7 +337,8 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
         "package": package,
         "price": price,
         "uid": text,
-        "status": "Pending"
+        "status": "Pending",
+        "user_id": update.effective_user.id
     }
 )
             await context.bot.send_message(
