@@ -38,30 +38,22 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text
 
     # Deposit Mode
-    if context.user_data.get("deposit_mode"):
+if context.user_data.get("deposit_mode"):
 
-        amount = text
+    amount = text
 
-        context.user_data["deposit_amount"] = amount
+    context.user_data["deposit_amount"] = amount
 
-        msg = await notify_admin(
-            update,
-            amount
-        )
+    context.user_data["waiting_screenshot"] = True
 
-        await context.bot.send_message(
-            chat_id=ADMIN_ID,
-            text=msg
-        )
+    context.user_data["deposit_mode"] = False
 
-        await update.message.reply_text(
-            "✅ Deposit Request Sent"
-        )
+    await update.message.reply_text(
+        "📸 Please upload payment screenshot."
+    )
 
-        context.user_data["deposit_mode"] = False
-
-        return
-
+    return
+    
     # Main Menu
     if text == "🎮 Top Up":
 
