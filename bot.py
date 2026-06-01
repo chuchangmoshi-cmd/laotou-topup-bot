@@ -81,13 +81,13 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "💰 Balance":
 
-    balance = get_balance(
-        update.effective_user.id
-    )
+        balance = get_balance(
+            update.effective_user.id
+        )
 
-    await update.message.reply_text(
-        f"💰 Your Balance\n\n{balance} KS"
-    )
+        await update.message.reply_text(
+            f"💰 Your Balance\n\n{balance} KS"
+        )
 
     elif text == "📦 My Orders":
 
