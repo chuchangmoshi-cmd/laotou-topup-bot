@@ -54,6 +54,38 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         return
 
+    # Waiting Screenshot
+    if context.user_data.get("waiting_screenshot"):
+
+        if update.message.photo:
+
+            amount = context.user_data.get("deposit_amount")
+
+            user = update.effective_user
+
+            caption = (
+                f"💳 New Deposit Request\n\n"
+                f"User: @{user.username}\n"
+                f"User ID: {user.id}\n"
+                f"Amount: {amount} KS"
+            )
+
+            photo = update.message.photo[-1].file_id
+
+            await context.bot.send_photo(
+                chat_id=ADMIN_ID,
+                photo=photo,
+                caption=caption
+            )
+
+            await update.message.reply_text(
+                "✅ Deposit Request Submitted"
+            )
+
+            context.user_data["waiting_screenshot"] = False
+
+            return
+
     # Main Menu
     if text == "🎮 Top Up":
 
@@ -224,11 +256,18 @@ def main():
 
     app = Application.builder().token(TOKEN).build()
 
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT, menu))
+    app.add_handler(
+        CommandHandler("start", start)
+    )
+
+    app.add_handler(
+        MessageHandler(
+            filters.TEXT | filters.PHOTO,
+            menu
+        )
+    )
 
     app.run_polling()
-
 
 if __name__ == "__main__":
     main()
