@@ -17,7 +17,11 @@ from telegram.ext import (
 import os
 
 from handlers.deposit import notify_admin, ADMIN_ID
-from handlers.balance import get_balance, add_balance
+from handlers.balance import (
+    get_balance,
+    add_balance,
+    deduct_balance
+)
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -258,25 +262,66 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Please send your PUBG UID"
         )
 
-    # UID Input
-    elif text.isdigit():
+# UID Input
+elif text.isdigit():
 
-        game = context.user_data.get("game")
-        package = context.user_data.get("package")
-        price = context.user_data.get("price")
+    game = context.user_data.get("game")
+    package = context.user_data.get("package")
+    price = context.user_data.get("price")
 
-        if game and package:
+    if game and package:
+
+        price_num = int(
+            price.replace(" KS", "")
+        )
+
+        balance = get_balance(
+            update.effective_user.id
+        )
+
+        if balance < price_num:
 
             await update.message.reply_text(
-                f"📦 Order Confirmation\n\n"
+                f"❌ Insufficient Balance\n\n"
+                f"Current Balance:\n"
+                f"{balance} KS 🇲🇲\n\n"
+                f"Required:\n"
+                f"{price_num} KS 🇲🇲"
+            )
+
+            return
+
+        deduct_balance(
+            update.effective_user.id,
+            price_num
+        )
+
+        new_balance = get_balance(
+            update.effective_user.id
+        )
+
+        await update.message.reply_text(
+            f"✅ Order Submitted\n\n"
+            f"Game: {game}\n"
+            f"Package: {package}\n"
+            f"Price: {price} 🇲🇲\n"
+            f"Player ID: {text}\n\n"
+            f"Remaining Balance:\n"
+            f"{new_balance} KS 🇲🇲"
+        )
+
+        await context.bot.send_message(
+            chat_id=ADMIN_ID,
+            text=(
+                f"📦 New Order\n\n"
+                f"User: @{update.effective_user.username}\n"
+                f"User ID: {update.effective_user.id}\n\n"
                 f"Game: {game}\n"
                 f"Package: {package}\n"
                 f"Price: {price}\n"
-                f"Player ID: {text}\n\n"
-                f"Reply YES to confirm."
+                f"Player ID: {text}"
             )
-
-    elif text == "🔙 Back":
+        )
 
         await start(update, context)
 
