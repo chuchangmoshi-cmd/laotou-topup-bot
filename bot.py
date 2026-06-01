@@ -7,7 +7,9 @@ from telegram.ext import (
     filters
 )
 import os
+
 from handlers.deposit import notify_admin, ADMIN_ID
+from handlers.balance import get_balance
 
 TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -79,9 +81,13 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif text == "💰 Balance":
 
-        await update.message.reply_text(
-            "💰 Your Balance\n\n0 KS"
-        )
+    balance = get_balance(
+        update.effective_user.id
+    )
+
+    await update.message.reply_text(
+        f"💰 Your Balance\n\n{balance} KS"
+    )
 
     elif text == "📦 My Orders":
 
