@@ -424,7 +424,7 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         if not success:
 
-            await context.bot.send_message(
+        await context.bot.send_message(
                 chat_id=user_id,
                 text="❌ Order Failed\n\nInsufficient Balance."
             )
